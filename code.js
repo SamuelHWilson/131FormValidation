@@ -24,7 +24,7 @@ function SetupDegrees() {
 }
 
 function SetupAllWarningTooltips() {
-    SetupWarningTooltip("signup-name", "Please enter a valid name. (Must be 6 or more characters in length.)");
+    SetupWarningTooltip("signup-name", "Please enter a valid name. (Letters and spaces only. Must be 6 characters or longer.)");
 	SetupWarningTooltip("signup-email", "Please enter a valid email address.");
 	SetupWarningTooltip("signup-phone", "Please enter a valid phone number. (Must match pattern (000)000-000 )");
 	SetupWarningTooltip("signup-hours", "Please choose an option.")
@@ -40,21 +40,23 @@ function SetupWarningTooltip(id, message) {
 }
 
 //Related to setup, shows tooltip, and sets up event to hide it later.
-function ShowWarning(id) {
+function ActivateWarning(id, removeEvent) {
 	var element = $("#"+id);
 	var anonHandle;
-	
+
 	//Show tooltip
 	element.tooltip("show");
-	element.toggleClass("border-danger");
-	
+	// element[0].classList.add("border-danger");
+    element.toggleClass("border-danger");
+
 	//Hide event, triggered when input is changed
 	anonHandle = function() {
 		element.tooltip("hide");
-		element.toggleClass("border-danger");
-		element[0].removeEventListener("input", anonHandle, false);
+		// element[0].classList.remove("border-danger");
+        element.toggleClass("border-danger");
+		element[0].removeEventListener(removeEvent, anonHandle, false);
 	}
-	element[0].addEventListener("input", anonHandle, false);
+	element[0].addEventListener(removeEvent, anonHandle, false);
 }
 
 function ActivateRadioTooltip(holderId) {
@@ -62,11 +64,11 @@ function ActivateRadioTooltip(holderId) {
 	var radios = $("#"+holderId+" input");
 	var anonHandle;
 	var anonRemoveHandle;
-	
+
 	//Show tooltip
 	holder.tooltip("show");
-	holder.toggleClass("border-danger");
-	
+	holder[0].classList.add("border-danger");
+
 	for (var i = 0; i < radios.length; i++) {
 		//Hide event, triggers when any of the radio boxes are changed.
 		anonHandle = function() {
@@ -75,13 +77,13 @@ function ActivateRadioTooltip(holderId) {
 		}
 		radios[i].addEventListener("click", anonHandle, false);
 	}
-	
+
 	//Event to remove handlers
 	anonRemoveHandle = function() {
 		for (var i = 0; i < radios.length; i++) {
 			radios[i].removeEventListener("click", anonHandle, false);
 		}
-		holder.toggleClass("border-danger");
+		holder[0].classList.remove("border-danger");
 	}
 }
 
@@ -96,21 +98,21 @@ function Validate(form) {
     var degreeSelect = $("#signup-degree");
 
     //Validate name (length > 6)
-    if (nameText[0].value.match(/[\w\s]{6,}/) == null) {
+    if (nameText[0].value.match(/^[a-zA-Z\s]{6,}$/) == null) {
         pass = false;
-        ShowWarning("signup-name");
+        ActivateWarning("signup-name", "input");
     }
 
     //Validate email (must be actual email)
     if (emailText[0].value.match(/^\w+@\w{2,}\.\w+$/) == null) {
         pass = false;
-        ShowWarning("signup-email");
+        ActivateWarning("signup-email", "input");
     }
 
     //Validate phone (must be actual phone #)
     if (phoneText[0].value.match(/^\(\d{3}\)\d{3}-\d{4}$/) == null) {
         pass = false;
-        ShowWarning("signup-phone");
+        ActivateWarning("signup-phone", "input");
     }
 
     //Validate hours are checked
@@ -122,7 +124,7 @@ function Validate(form) {
     //Validate degree is selected
     if (degreeSelect[0].selectedIndex == -1) {
         pass = false;
-		ShowWarning("signup-degree");
+		ActivateWarning("signup-degree", "change");
     }
 
     //Validate
