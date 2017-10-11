@@ -1,0 +1,16 @@
+/* Reset */
+p {
+    margin: 0px;
+    padding: 0px;
+}
+
+form, #signup-output {
+    width: 500px;
+    margin: auto;
+}
+
+#signup-hours {
+	border: 1px solid rgba(0, 0, 0, 0);
+	border-radius: .25rem;
+	padding-bottom: .2rem;
+}
